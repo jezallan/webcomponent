@@ -34,7 +34,7 @@ class Module {
       Object.defineProperty(exported.prototype, key, descriptor);
     }
   }
-  onLinkLoad(e, callback) {
+  onLinkLoad(e) {
     const ownerDoc = e.target.import,
           template = ownerDoc.querySelector('template'),
           exported = ownerDoc.exports,
@@ -47,10 +47,10 @@ class Module {
     this.imported[tagName] = exported;
     this.importedMap[pathname] = tagName;
     document.registerElement(tagName, exported);
-    if (callback) callback();
+    if (this.moduleLoaded) this.moduleLoaded();
   }
-  handleLink(link, callback) {
-    link.addEventListener('load', this.onLinkLoad.bind(this, callback));
+  handleLink(link) {
+    link.addEventListener('load', this.onLinkLoad.bind(this));
     this.document.head.appendChild(link);
   }
   import(href, tagName, callback) {
@@ -59,13 +59,14 @@ class Module {
 
     if (this.imported[tagName]) return this;
     this.imported[tagName] = 'pending';
+    if (callback) this.moduleLoaded = callback;
 
     const link = document.createElement('link');
     link.rel   = 'import';
     link.async = true;
     link.href  = href.filepath;
     link.setAttribute('tag-name', tagName);
-    this.handleLink(link, callback);
+    this.handleLink(link);
 
     return this;
   }
