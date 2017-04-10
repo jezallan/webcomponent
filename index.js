@@ -93,7 +93,7 @@ class CoreWebComponent extends HTMLElement {
   detachedCallback() {
     //REMOVE BINDINGS RELATED TO ELEMENT ONCE DETACHED
 
-    //FIXME SAFARI DOING SOME STRANGE THINGS
+    //SAFARI HACKY WORKAROUND
     if (!this._ownerInstance && !this.treeScope_ && !this.treeScope_.parent) { 
       return console.log('NO PARENT FOUND', this);
     }
