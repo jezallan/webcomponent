@@ -2,6 +2,7 @@ class Module {
   get currentScript() { return document.currentScript; }
   get document()      { return this.currentScript ? this.currentScript.ownerDocument : document; }
   get imported()      { return this._imported = this._imported || {}; }
+  get loadedCallbacks()      { return this._loadedCallbacks = this._loadedCallbacks || {}; }
   get importedMap()   { return this._importedMap = this._importedMap || {}; }
   set exports(value)  { this.document.exports = value; }
   location(href) {
