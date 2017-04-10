@@ -47,19 +47,22 @@ class Module {
     this.imported[tagName] = exported;
     this.importedMap[pathname] = tagName;
     document.registerElement(tagName, exported);
-    if (this.moduleLoaded) this.moduleLoaded();
+    if (this.loadedCallbacks[tagName]) {
+      this.loadedCallbacks[tagName](tagName);
+      delete this.loadedCallbacks[tagName];
+    }
   }
   handleLink(link) {
     link.addEventListener('load', this.onLinkLoad.bind(this));
     this.document.head.appendChild(link);
   }
-  import(href, tagName, callback) {
+  import(href, tagName, moduleLoaded) {
     href = this.location(href);
     if (!tagName) tagName = href.filename.replace(/\.html$/, '');
 
     if (this.imported[tagName]) return this;
     this.imported[tagName] = 'pending';
-    if (callback) this.moduleLoaded = callback;
+    if (moduleLoaded) this.loadedCallbacks[tagName] = moduleLoaded
 
     const link = document.createElement('link');
     link.rel   = 'import';
