@@ -60,11 +60,11 @@ class Module {
   import(href, tagName, moduleLoaded) {
     href = this.location(href);
     if (!tagName) tagName = href.filename.replace(/\.html$/, '');
-    if (moduleLoaded) this.loadedCallbacks[tagName] = moduleLoaded;
     if (this.imported[tagName]) {
-      this.loadedCallbacks[tagName](tagName);
+      if (moduleLoaded) this.moduleLoaded(tagName);
       return this;
     }
+    if (moduleLoaded) this.loadedCallbacks[tagName] = moduleLoaded;
     this.imported[tagName] = 'pending';
 
     const link = document.createElement('link');
