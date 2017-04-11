@@ -61,7 +61,7 @@ class Module {
     href = this.location(href);
     if (!tagName) tagName = href.filename.replace(/\.html$/, '');
     if (this.imported[tagName]) {
-      if (moduleLoaded) this.moduleLoaded(tagName);
+      if (moduleLoaded) moduleLoaded(tagName);
       return this;
     }
     if (moduleLoaded) this.loadedCallbacks[tagName] = moduleLoaded;
