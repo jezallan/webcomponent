@@ -2,7 +2,6 @@ class Module {
   get currentScript() { return document.currentScript; }
   get document()      { return this.currentScript ? this.currentScript.ownerDocument : document; }
   get imported()      { return this._imported = this._imported || {}; }
-  get loadedCallbacks()      { return this._loadedCallbacks = this._loadedCallbacks || {}; }
   get importedMap()   { return this._importedMap = this._importedMap || {}; }
   set exports(value)  { this.document.exports = value; }
   location(href) {
@@ -48,23 +47,22 @@ class Module {
     this.imported[tagName] = exported;
     this.importedMap[pathname] = tagName;
     document.registerElement(tagName, exported);
-    if (this.loadedCallbacks[tagName]) {
-      this.loadedCallbacks[tagName](tagName);
-      delete this.loadedCallbacks[tagName];
-    }
+  }
+  onLoad(tagName, callback){
+    if (callback) callback(tagName, true);
+  }
+  onError(tagName, callback){
+    if (callback) callback(tagName, false);
   }
   handleLink(link) {
     link.addEventListener('load', this.onLinkLoad.bind(this));
     this.document.head.appendChild(link);
   }
-  import(href, tagName, moduleLoaded) {
+  import(href, tagName, callback) {
     href = this.location(href);
     if (!tagName) tagName = href.filename.replace(/\.html$/, '');
-    if (this.imported[tagName]) {
-      if (moduleLoaded) moduleLoaded(tagName);
-      return this;
-    }
-    if (moduleLoaded) this.loadedCallbacks[tagName] = moduleLoaded;
+
+    if (this.imported[tagName]) return this;
     this.imported[tagName] = 'pending';
 
     const link = document.createElement('link');
@@ -72,6 +70,8 @@ class Module {
     link.async = true;
     link.href  = href.filepath;
     link.setAttribute('tag-name', tagName);
+    link.onload = this.onLoad.bind(this, tagName, callback);
+    link.onerror = this.onError.bind(this, tagName, callback);
     this.handleLink(link);
 
     return this;
