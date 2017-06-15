@@ -42,8 +42,16 @@ class Module {
           tagName  = e.target.getAttribute('tag-name'),
           pathname = this.location(ownerDoc.baseURI).pathname;
 
-    if (template && exported) { exported.attachTemplate(template); }
-    if (exported && exported.extends) { this.extendComponent(exported); }
+    if (template) { 
+      if (exported) {
+        exported.attachTemplate(template); 
+      } else {
+          window.location.reload(true);
+      }
+    }
+    if (exported && exported.extends) { 
+      this.extendComponent(exported); 
+    }
 
     this.imported[tagName] = exported;
     this.importedMap[pathname] = tagName;

@@ -81,11 +81,15 @@ module.exports = function (polyfillURL) {
           document.head.appendChild(style);
         }
       };
-      dispatchReadyEvent();
+      setTimeout(() => {
+        dispatchReadyEvent();
+      }, 0);
     });
   } else {
     require('./module'),
     require('./index').CoreWebComponent;
-    setTimeout(dispatchReadyEvent, 0);
+    setTimeout(() => {
+      dispatchReadyEvent()
+    }, 0);
   }
 };
