@@ -1,3 +1,5 @@
+# WARNING - PLEASE, FOR THE LOVE OF ALL THAT IS SACRED, DO NOT USE THIS
+
 A different approach to WebComponents
 ===
 
