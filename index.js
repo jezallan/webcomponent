@@ -93,9 +93,11 @@ class CoreWebComponent extends HTMLElement {
   detachedCallback() {
     //REMOVE BINDINGS RELATED TO ELEMENT ONCE DETACHED
 
+    if (this.detached) this.detached();
+
     //SAFARI HACKY WORKAROUND
-    if (!this._ownerInstance && !this.treeScope_ && !this.treeScope_.parent) { 
-      return console.log('NO PARENT FOUND', this);
+    if (!this._ownerInstance && (!this.treeScope_ || (this.treeScope_ && !this.treeScope_.parent))) {
+      return; // console.log('NO PARENT FOUND');
     }
 
     const parent = this._ownerInstance || this.treeScope_.parent,
@@ -112,7 +114,6 @@ class CoreWebComponent extends HTMLElement {
       //IF NO MORE BINDINGS, REMOVE KEY
       if (!bindings.length) { delete bindingKeys[key]; }
     }
-    if (this.detached) this.detached();
   }
 }
 class WebComponent extends CoreWebComponent {
